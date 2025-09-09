@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import '../components/canvas/touch_detector.dart';
+import 'package:flutter/material.dart';
 
+import '../components/canvas/touch_detector.dart';
 import 'painter.dart';
 
 /// This is the main widget that will paint the map based on the given insturctions (json).
@@ -23,6 +23,14 @@ class SimpleMap extends StatelessWidget {
   final void Function(String id, String name, TapUpDetails tapDetails)?
       callback;
 
+  /// Triggered when a country is hovered over.
+  /// The first parameter is the isoCode of the country being hovered.
+  /// The second parameter is the name of the country being hovered.
+  /// The third parameter is the position of the hover event.
+  /// The fourth parameter indicates if the country is currently being hovered (true) or hover ended (false).
+  final void Function(String id, String name, Offset position, bool isHovering)?
+      onHover;
+
   /// This is the BoxFit that will be used to fit the map in the available space.
   /// If not provided the default BoxFit will be BoxFit.contain.
   final BoxFit? fit;
@@ -32,6 +40,7 @@ class SimpleMap extends StatelessWidget {
     this.defaultColor,
     this.colors,
     this.callback,
+    this.onHover,
     this.fit,
     this.countryBorder,
     Key? key,
@@ -59,6 +68,11 @@ class SimpleMap extends StatelessWidget {
                         callback: (id, name, tapdetails) {
                           if (callback != null) {
                             callback!(id, name, tapdetails);
+                          }
+                        },
+                        onHover: (id, name, position, isHovering) {
+                          if (onHover != null) {
+                            onHover!(id, name, position, isHovering);
                           }
                         },
                         countryBorder: countryBorder,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import '../components/canvas/touchy_canvas.dart';
 import '../countries_world_map.dart';
 
@@ -17,6 +19,10 @@ class SimpleMapPainter extends CustomPainter {
   final void Function(String id, String name, TapUpDetails tapUpDetails)
       callback;
 
+  /// Triggered when a country is hovered over.
+  final void Function(String id, String name, Offset position, bool isHovering)?
+      onHover;
+
   final CountryBorder? countryBorder;
 
   const SimpleMapPainter({
@@ -25,6 +31,7 @@ class SimpleMapPainter extends CustomPainter {
     this.colors,
     required this.context,
     required this.callback,
+    this.onHover,
     this.countryBorder,
   });
 
@@ -65,17 +72,41 @@ class SimpleMapPainter extends CustomPainter {
             tabdetail,
           );
 
+      final onHoverCallback = onHover != null
+          ? (PointerHoverEvent hoverEvent) => onHover!(
+                countryPathList[i].uniqueID,
+                countryPathList[i].name,
+                hoverEvent.localPosition,
+                true,
+              )
+          : null;
+
+      final onHoverExitCallback = onHover != null
+          ? (PointerExitEvent exitEvent) => onHover!(
+                countryPathList[i].uniqueID,
+                countryPathList[i].name,
+                exitEvent.localPosition,
+                false,
+              )
+          : null;
+
       // Draw country body
       String uniqueID = countryPathList[i].uniqueID;
       Paint paint = Paint()..color = colors?[uniqueID] ?? defaultColor;
-      canvas.drawPath(path, paint, onTapUp: onTapUp);
+      canvas.drawPath(path, paint,
+          onTapUp: onTapUp,
+          onHover: onHoverCallback,
+          onHoverExit: onHoverExitCallback);
 
       // Draw country border
       if (countryBorder != null) {
         paint.color = countryBorder!.color;
         paint.strokeWidth = countryBorder!.width;
         paint.style = PaintingStyle.stroke;
-        canvas.drawPath(path, paint, onTapUp: onTapUp);
+        canvas.drawPath(path, paint,
+            onTapUp: onTapUp,
+            onHover: onHoverCallback,
+            onHoverExit: onHoverExitCallback);
       }
     }
   }
@@ -122,5 +153,3 @@ class SimpleMapInstruction {
         uniqueID: json['u'], name: json['n'], instructions: paths);
   }
 }
-
-

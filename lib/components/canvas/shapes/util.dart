@@ -1,6 +1,9 @@
 import 'dart:math';
-import '../types/types.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../types/types.dart';
 
 class ShapeUtil {
   static double distance(Offset p1, Offset p2) {
@@ -12,38 +15,23 @@ typedef GestureCallbackFunction = void Function();
 
 class TouchCanvasUtil {
   static Offset getPointFromGestureDetail(dynamic gestureDetail) {
-    switch (gestureDetail.runtimeType) {
-      // case TapDownDetails:
-      //   return (gestureDetail as TapDownDetails).localPosition;
-      case TapUpDetails:
-        return (gestureDetail as TapUpDetails).localPosition;
-      // case DragDownDetails:
-      //   return (gestureDetail as DragDownDetails).localPosition;
-      // case DragStartDetails:
-      //   return (gestureDetail as DragStartDetails).localPosition;
-      // case DragUpdateDetails:
-      //   return (gestureDetail as DragUpdateDetails).localPosition;
-      // case LongPressStartDetails:
-      //   return (gestureDetail as LongPressStartDetails).localPosition;
-      // case LongPressEndDetails:
-      //   return (gestureDetail as LongPressEndDetails).localPosition;
-      // case LongPressMoveUpdateDetails:
-      //   return (gestureDetail as LongPressMoveUpdateDetails).localPosition;
-      // case ScaleStartDetails:
-      //   return (gestureDetail as ScaleStartDetails).localFocalPoint;
-      // case ScaleUpdateDetails:
-      //   return (gestureDetail as ScaleUpdateDetails).localFocalPoint;
-      // case ForcePressDetails:
-      //   return (gestureDetail as ForcePressDetails).localPosition;
-      default:
-        throw Exception(
-            "gestureDetail.runTimeType = ${gestureDetail.runtimeType} is not recognized ! ");
+    if (gestureDetail is TapUpDetails) {
+      return gestureDetail.localPosition;
+    } else if (gestureDetail is PointerHoverEvent) {
+      return gestureDetail.localPosition;
+    } else if (gestureDetail is PointerExitEvent) {
+      return gestureDetail.localPosition;
+    } else {
+      throw Exception(
+          "gestureDetail.runTimeType = ${gestureDetail.runtimeType} is not recognized ! ");
     }
   }
 
   static Map<GestureType, Function> getGestureCallbackMap({
     // required GestureTapDownCallback? onTapDown,
     required GestureTapUpCallback? onTapUp,
+    required void Function(PointerHoverEvent)? onHover,
+    required void Function(PointerExitEvent)? onHoverExit,
     // required GestureLongPressStartCallback? onLongPressStart,
     // required GestureLongPressEndCallback? onLongPressEnd,
     // required GestureLongPressMoveUpdateCallback? onLongPressMoveUpdate,
@@ -63,6 +51,9 @@ class TouchCanvasUtil {
     //   map.putIfAbsent(GestureType.onTapDown, () => onTapDown);
     // }
     if (onTapUp != null) map.putIfAbsent(GestureType.onTapUp, () => onTapUp);
+    if (onHover != null) map.putIfAbsent(GestureType.onHover, () => onHover);
+    if (onHoverExit != null)
+      map.putIfAbsent(GestureType.onHoverExit, () => onHoverExit);
 
     // if (onLongPressStart != null) {
     //   map.putIfAbsent(GestureType.onLongPressStart, () => onLongPressStart);

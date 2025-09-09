@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'types/types.dart';
 
 ///[CanvasTouchDetector] widget detects the gestures on your [CustomPaint] widget.
@@ -29,19 +31,27 @@ class _CanvasTouchDetectorState extends State<CanvasTouchDetector> {
   @override
   Widget build(BuildContext context) {
     return TouchDetectionController(touchController, addStreamListener,
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          child: Builder(
-            builder: (context) {
-              return widget.builder(context);
+        child: MouseRegion(
+          onHover: (hoverEvent) {
+            touchController.add(Gesture(GestureType.onHover, hoverEvent));
+          },
+          onExit: (exitEvent) {
+            touchController.add(Gesture(GestureType.onHoverExit, exitEvent));
+          },
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            child: Builder(
+              builder: (context) {
+                return widget.builder(context);
+              },
+            ),
+            // onTapDown: (tapDetail) {
+            //   touchController.add(Gesture(GestureType.onTapDown, tapDetail));
+            // },
+            onTapUp: (tapDetail) {
+              touchController.add(Gesture(GestureType.onTapUp, tapDetail));
             },
           ),
-          // onTapDown: (tapDetail) {
-          //   touchController.add(Gesture(GestureType.onTapDown, tapDetail));
-          // },
-          onTapUp: (tapDetail) {
-            touchController.add(Gesture(GestureType.onTapUp, tapDetail));
-          },
         ));
   }
 

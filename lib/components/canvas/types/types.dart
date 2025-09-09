@@ -1,5 +1,6 @@
-import '../shapes/clip.dart';
 import 'package:flutter/material.dart';
+
+import '../shapes/clip.dart';
 
 typedef CustomTouchPaintBuilder = CustomPaint Function(BuildContext context);
 
@@ -22,6 +23,8 @@ enum GestureType {
   onTap,
   // onTapDown,
   onTapUp,
+  onHover,
+  onHoverExit,
   // onHorizontalDragDown,
   // onHorizontalDragStart,
   // onHorizontalDragUpdate,

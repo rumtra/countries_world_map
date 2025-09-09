@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'touch_detector.dart';
+import 'package:flutter/services.dart';
+
 import 'shape_handler.dart';
 import 'shapes/path.dart';
 import 'shapes/util.dart';
+import 'touch_detector.dart';
 
 class TouchyCanvas {
   final Canvas _canvas;
@@ -37,6 +39,8 @@ class TouchyCanvas {
     // PaintingStyle? paintStyleForTouch,
     GestureTapCallback? onTap,
     GestureTapUpCallback? onTapUp,
+    void Function(PointerHoverEvent)? onHover,
+    void Function(PointerExitEvent)? onHoverExit,
     // GestureLongPressStartCallback? onLongPressStart,
     // GestureLongPressEndCallback? onLongPressEnd,
     // GestureLongPressMoveUpdateCallback? onLongPressMoveUpdate,
@@ -57,6 +61,8 @@ class TouchyCanvas {
         gestureMap: TouchCanvasUtil.getGestureCallbackMap(
           // onTapDown: onTapDown,
           onTapUp: onTapUp,
+          onHover: onHover,
+          onHoverExit: onHoverExit,
           // onLongPressStart: onLongPressStart,
           // onLongPressEnd: onLongPressEnd,
           // onLongPressMoveUpdate: onLongPressMoveUpdate,
