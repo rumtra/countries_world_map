@@ -26,7 +26,7 @@ class SimpleMap extends StatelessWidget {
   /// Triggered when a country is hovered over.
   /// The first parameter is the isoCode of the country being hovered.
   /// The second parameter is the name of the country being hovered.
-  /// The third parameter is the position of the hover event.
+  /// The third parameter is the center position of the country (calculated from path bounding box).
   /// The fourth parameter indicates if the country is currently being hovered (true) or hover ended (false).
   final void Function(String id, String name, Offset position, bool isHovering)?
       onHover;
