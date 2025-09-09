@@ -77,7 +77,7 @@ class SimpleMapPainter extends CustomPainter {
               onHover!(
                 countryPathList[i].uniqueID,
                 countryPathList[i].name,
-                hoverEvent.position,
+                hoverEvent.localPosition,
                 true,
               );
             }
@@ -88,7 +88,7 @@ class SimpleMapPainter extends CustomPainter {
               onHover!(
                 countryPathList[i].uniqueID,
                 countryPathList[i].name,
-                exitEvent.position,
+                exitEvent.localPosition,
                 false,
               );
             }

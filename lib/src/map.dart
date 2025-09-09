@@ -55,8 +55,8 @@ class SimpleMap extends StatelessWidget {
     List<Map<String, dynamic>> instruction =
         List<Map<String, dynamic>>.from(map['i']);
 
-    return FittedBox(
-      fit: fit ?? BoxFit.contain,
+    return AspectRatio(
+      aspectRatio: height == 0 ? 1 : width / height,
       child: RepaintBoundary(
           child: CanvasTouchDetector(
               builder: (context) => CustomPaint(
