@@ -35,43 +35,6 @@ class SimpleMapPainter extends CustomPainter {
     this.countryBorder,
   });
 
-  /// Calculate the center position of a country based on its path coordinates
-  Offset? _getCountryCenter(SimpleMapInstruction country, Size canvasSize) {
-    if (country.instructions.isEmpty) return null;
-
-    try {
-      double minX = double.infinity;
-      double maxX = double.negativeInfinity;
-      double minY = double.infinity;
-      double maxY = double.negativeInfinity;
-
-      // Parse all path instructions to find the bounding box
-      for (String instruction in country.instructions) {
-        if (instruction == "c") continue; // Skip close path instruction
-
-        List<String> coordinates = instruction.substring(1).split(',');
-        if (coordinates.length != 2) continue;
-
-        double x = double.parse(coordinates[0]);
-        double y = double.parse(coordinates[1]);
-
-        minX = x < minX ? x : minX;
-        maxX = x > maxX ? x : maxX;
-        minY = y < minY ? y : minY;
-        maxY = y > maxY ? y : maxY;
-      }
-
-      // Calculate center coordinates (normalized 0-1)
-      double centerX = (minX + maxX) / 2;
-      double centerY = (minY + maxY) / 2;
-
-      // Scale to canvas size
-      return Offset(centerX * canvasSize.width, centerY * canvasSize.height);
-    } catch (e) {
-      return null;
-    }
-  }
-
   @override
   void paint(Canvas c, Size s) {
     TouchyCanvas canvas = TouchyCanvas(context, c);
@@ -111,11 +74,10 @@ class SimpleMapPainter extends CustomPainter {
 
       final onHoverCallback = onHover != null
           ? (PointerHoverEvent hoverEvent) {
-              final countryCenter = _getCountryCenter(countryPathList[i], s);
               onHover!(
                 countryPathList[i].uniqueID,
                 countryPathList[i].name,
-                countryCenter ?? hoverEvent.localPosition,
+                hoverEvent.position,
                 true,
               );
             }
@@ -123,11 +85,10 @@ class SimpleMapPainter extends CustomPainter {
 
       final onHoverExitCallback = onHover != null
           ? (PointerExitEvent exitEvent) {
-              final countryCenter = _getCountryCenter(countryPathList[i], s);
               onHover!(
                 countryPathList[i].uniqueID,
                 countryPathList[i].name,
-                countryCenter ?? exitEvent.localPosition,
+                exitEvent.position,
                 false,
               );
             }

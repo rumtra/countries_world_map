@@ -28,35 +28,24 @@ class _HoverExampleMapState extends State<HoverExampleMap> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.92,
-                  // Actual widget from the Countries_world_map package with onHover functionality.
                   child: SimpleMap(
-                    instructions: SMapWorld.instructions,
+                    instructions: SMapWorld.instructionsMercator,
                     defaultColor: Colors.grey,
-
-                    // Tap callback - shows country page
-                    callback: (id, name, tapdetails) {
-                      _showCountryDialog(id, name);
-                    },
-
-                    // NEW: Hover callback - gets country id, name, country center position and hovering state
+                    callback: (id, name, tapdetails) {},
                     onHover: (id, name, position, isHovering) {
                       setState(() {
                         if (isHovering) {
                           hoveredCountry = name;
                           hoveredCountryId = id;
-                          // Position now represents the fixed country center calculated by the package
                           hoverPosition = position;
                           isCurrentlyHovering = true;
                         } else {
-                          // Keep the last hovered country info but mark as not hovering
                           isCurrentlyHovering = false;
                         }
                       });
                     },
-
                     countryBorder: CountryBorder(color: Colors.white),
                     colors: SMapWorldColors(
-                      // Highlight some countries in different colors for demo
                       uS: Colors.blue.shade300,
                       cA: Colors.red.shade300,
                       bR: Colors.green.shade300,
@@ -75,139 +64,91 @@ class _HoverExampleMapState extends State<HoverExampleMap> {
             ),
           ),
         ),
-
-        // Show hover information
-        if (hoveredCountryId.isNotEmpty)
-          Card(
-            elevation: 8,
-            color:
-                isCurrentlyHovering ? Colors.blue.shade50 : Colors.grey.shade50,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        isCurrentlyHovering
-                            ? 'Currently Hovering:'
-                            : 'Last Hovered:',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade600,
+        if (hoveredCountryId.isNotEmpty && hoverPosition != null)
+          Positioned(
+            left: hoverPosition!.dx,
+            top: hoverPosition!.dy,
+            child: Card(
+              elevation: 8,
+              color: isCurrentlyHovering
+                  ? Colors.blue.shade50
+                  : Colors.grey.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          isCurrentlyHovering
+                              ? 'Currently Hovering:'
+                              : 'Last Hovered:',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade600,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              isCurrentlyHovering ? Colors.green : Colors.grey,
+                        SizedBox(width: 8),
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isCurrentlyHovering
+                                ? Colors.green
+                                : Colors.grey,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    hoveredCountry,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isCurrentlyHovering
-                          ? Colors.blue
-                          : Colors.grey.shade700,
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Country ID: $hoveredCountryId',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  if (hoverPosition != null) ...[
                     SizedBox(height: 4),
                     Text(
-                      'Country Center: (${hoverPosition!.dx.toStringAsFixed(1)}, ${hoverPosition!.dy.toStringAsFixed(1)})',
+                      hoveredCountry,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isCurrentlyHovering
+                            ? Colors.blue
+                            : Colors.grey.shade700,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Country ID: $hoveredCountryId',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
                       ),
                     ),
-                  ],
-                  SizedBox(height: 4),
-                  Text(
-                    'Hovering: ${isCurrentlyHovering ? 'Yes' : 'No'}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: isCurrentlyHovering ? Colors.green : Colors.red,
+                    if (hoverPosition != null) ...[
+                      SizedBox(height: 4),
+                      Text(
+                        'Country Center: (${hoverPosition!.dx.toStringAsFixed(1)}, ${hoverPosition!.dy.toStringAsFixed(1)})',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 4),
+                    Text(
+                      'Hovering: ${isCurrentlyHovering ? 'Yes' : 'No'}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isCurrentlyHovering ? Colors.green : Colors.red,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-
-        // Instructions
-        Positioned(
-          bottom: 36,
-          left: 0,
-          right: 0,
-          child: Column(
-            children: [
-              Text(
-                'Hover over countries to see their information',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Tap/click a country to see more details',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
       ],
-    );
-  }
-
-  void _showCountryDialog(String countryId, String countryName) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Country Information'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Name: $countryName'),
-              SizedBox(height: 8),
-              Text('ID: $countryId'),
-              SizedBox(height: 8),
-              Text('You clicked on this country!'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
